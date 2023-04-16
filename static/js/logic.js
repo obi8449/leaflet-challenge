@@ -1,6 +1,6 @@
-//assistance and starter code credited to classmate Jess Greco
-// Store url in a variable
-let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
+//classmate Jess Greco assisted with starter code 
+// Store url of all earthquake date from the past 7 days in a variable
+let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 d3.json(url).then(function (data) {
 
@@ -51,46 +51,48 @@ function newFeature(earthquakeData) {
 }
 
 const createMap = (earthquakes) => {
-    // Create tile layer
-    const street = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }
-    );
-  
-    // Create map
-    const myMap = L.map("map", {
-      center: [8.5380, -80.7821], // Panama
-      zoom: 4,
-      layers: [street, earthquakes],
-    });
+  // Create tile layer
+  const street = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }
+  );
 
-    var legend = L.control({
-        position: "bottomleft"
-    });
-    // Add legend details
-    const createLegend = () => {
-        const legend = L.control({ position: "bottomright" });
-      
-        legend.onAdd = () => {
-          const div = L.DomUtil.create("div", "info legend");
-          const grades = [-10, 10, 30, 50, 70, 90];
-          const colors = ["#2AA10F", "#92E000", "#E1FF00", "#F58B00", "#DE3700", "#B20000"];
-      
-          div.innerHTML += "<h3 style='text-align: center'>Earthquake Depth (Km)</h3>";
-          for (let i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-              "<i style='background: " +
-              colors[i] +
-              "'></i> " +
-              grades[i] +
-              (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
-          }
-      
-          return div;
-        };
-      
-        return legend;
-      };
+  // Create map
+  const myMap = L.map("map", {
+    center: [8.5380, -80.7821], // Panama
+    zoom: 4,
+    layers: [street, earthquakes],
+  });
+
+  // Add legend to map
+  const legend = createLegend();
+  legend.addTo(myMap);
+};
+
+// Create legend
+const createLegend = () => {
+  const legend = L.control({ position: "bottomright" });
+
+  legend.onAdd = () => {
+    const div = L.DomUtil.create("div", "info legend");
+    const grades = [-10, 10, 30, 50, 70, 90];
+    const colors = ["#2AA10F", "#92E000", "#E1FF00", "#F58B00", "#DE3700", "#B20000"];
+
+    div.innerHTML += "<h3 style='text-align: center'>Earthquake Depth (Km)</h3>";
+    for (let i = 0; i < grades.length; i++) {
+      div.innerHTML +=
+        "<i style='background: " +
+        colors[i] +
+        "'></i> " +
+        grades[i] +
+        (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
+    }
+
+    return div;
+  };
+
+  return legend;
+};
     
   // add legend to map
-  legend.addTo(myMap)};
+  legend.addTo(myMap);
